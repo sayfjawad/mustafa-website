@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>mustafa · sdai.nl</title>
+    <style>
+      :root { color-scheme: light dark; }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0; min-height: 100vh; display: grid; place-items: center;
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+        background: radial-gradient(1200px 600px at 50% -10%, #6366f1 0%, #0b1020 55%);
+        color: #e7e9f3;
+      }
+      .card {
+        max-width: 640px; margin: 2rem; padding: 2.5rem;
+        background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
+        border-radius: 20px; backdrop-filter: blur(8px);
+        box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+      }
+      h1 { margin: 0 0 .25rem; font-size: 2rem; }
+      .badge { display:inline-block; font-size:.8rem; padding:.2rem .6rem;
+        background:#6366f1; border-radius:999px; margin-bottom:1rem; }
+      p { line-height: 1.6; opacity: .9; }
+      code { background: rgba(0,0,0,.35); padding: .15rem .4rem; border-radius: 6px; font-size:.9em; }
+      ol { line-height: 1.9; }
+      a { color: #a5b4fc; }
+    </style>
+  </head>
+  <body>
+    <main class="card">
+      <span class="badge">AI Training · sdai.nl</span>
+      <h1>Hoi mustafa 👋</h1>
+      <p>
+        Je omgeving draait. Deze pagina wordt geserveerd vanuit
+        <code>/workspace/mustafa-website</code> op poort <code>3000</code> en is
+        live op <a href="https://mustafa.sdai.nl">mustafa.sdai.nl</a>.
+      </p>
+      <p>Aan de slag met je agent:</p>
+      <ol>
+        <li>Open de browser-IDE of SSH in je omgeving.</li>
+        <li>Laat de agent deze site verbouwen tot jouw web-app.</li>
+        <li>Sla het werk op: <code>git add -A &amp;&amp; git commit -m "..." &amp;&amp; git push</code></li>
+      </ol>
+      <p style="opacity:.7;font-size:.9rem">
+        Je code staat in <code>github.com/sayfjawad/mustafa-website</code>.
+        Vervang gerust <code>server.js</code> en <code>index.html</code> door je eigen framework —
+        blijf alleen op <code>0.0.0.0:3000</code> serveren.
+      </p>
+    </main>
+  </body>
+</html>
