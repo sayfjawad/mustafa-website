@@ -307,6 +307,19 @@ select {
   overflow-wrap: anywhere;
 }
 
+.error small {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: rgba(254, 202, 202, 0.72);
+  overflow-wrap: anywhere;
+}
+
+.error .actions {
+  margin-top: 0.7rem;
+}
+
 .success {
   margin-top: 1.25rem;
   padding: 0.9rem 1.1rem;

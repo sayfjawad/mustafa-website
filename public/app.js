@@ -10,6 +10,10 @@ const els = {
   url: $("urlInput"),
   fetchBtn: $("fetchBtn"),
   errorBox: $("errorBox"),
+  errorText: $("errorText"),
+  errorDetail: $("errorDetail"),
+  errorActions: $("errorActions"),
+  retryBtn: $("retryBtn"),
   setupBox: $("setupBox"),
   infoSection: $("infoSection"),
   thumb: $("thumb"),
@@ -106,14 +110,29 @@ function post(path, body) {
   });
 }
 
-function showError(message) {
-  els.errorBox.textContent = message;
+/**
+ * Shows the error panel. `retry` adds a "Try again" button (only useful when
+ * there is a video on screen), `detail` holds the raw yt-dlp message.
+ */
+function showError(message, { detail = null, retry = false } = {}) {
+  els.errorText.textContent = message;
+  els.errorActions.hidden = !(retry && state.info);
+  if (detail && detail !== message) {
+    els.errorDetail.textContent = `Details: ${detail}`;
+    els.errorDetail.hidden = false;
+  } else {
+    els.errorDetail.textContent = "";
+    els.errorDetail.hidden = true;
+  }
   els.errorBox.hidden = false;
 }
 
 function clearMessages() {
   els.errorBox.hidden = true;
-  els.errorBox.textContent = "";
+  els.errorText.textContent = "";
+  els.errorDetail.textContent = "";
+  els.errorDetail.hidden = true;
+  els.errorActions.hidden = true;
 }
 
 function setBusy(button, busy, label) {
@@ -255,6 +274,7 @@ function showProgress(job) {
   if (job.sizeText) detail.push(job.sizeText);
   if (job.speed) detail.push(job.speed);
   if (job.eta) detail.push(`ETA ${job.eta}`);
+  if (job.attempt > 1) detail.push(`attempt ${job.attempt}/${job.attemptsMax}`);
   els.progressDetail.textContent = detail.length ? ` · ${detail.join(" · ")}` : "";
 
   els.progressBar.classList.toggle("indeterminate", queued || job.status === "processing");
@@ -291,7 +311,9 @@ function handleUpdate(job) {
 
   if (job.status === "delivered" || job.status === "canceled" || job.status === "error") {
     stopWatching();
-    if (job.status === "error") showError(job.error || "The download failed.");
+    if (job.status === "error") {
+      showError(job.error || "The download failed.", { detail: job.errorDetail, retry: true });
+    }
     if (job.status === "delivered") {
       els.progressMessage.textContent = "Saved by your browser";
     }
@@ -410,6 +432,12 @@ els.quality.addEventListener("change", () => {
 });
 
 els.downloadBtn.addEventListener("click", startDownload);
+
+els.retryBtn.addEventListener("click", () => {
+  if (!state.info) return;
+  clearMessages();
+  startDownload();
+});
 
 els.cancelBtn.addEventListener("click", async () => {
   const id = state.job && state.job.id;

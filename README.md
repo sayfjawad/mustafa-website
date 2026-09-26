@@ -13,6 +13,10 @@ Live: **https://mustafa.sdai.nl** · IDE: **https://ide-mustafa.sdai.nl**
 - **Audio**: MP3 van 128 t/m 320 kbps (met metadata).
 - Live voortgangsbalk (server-sent events: percentage, snelheid, ETA, grootte).
 - Max **2 gelijktijdige** downloads; de rest wacht in de wachtrij.
+- Blokkeert YouTube de download (`HTTP 403: Forbidden`)? De app probeert het
+  automatisch opnieuw (max. 3 pogingen) met andere yt-dlp *player clients* en
+  een verse media-URL, en toont daarna een begrijpelijke foutmelding met een
+  **Try again**-knop.
 - Klaar? Het bestand wordt automatisch in je browser opgeslagen.
 - Alleen YouTube-links (`youtube.com`, `youtu.be`, `/shorts/`), tenzij je
   `ALLOW_ANY_URL=1` zet.
@@ -39,6 +43,7 @@ niets te doen. Vereist: Node ≥ 18 en `ffmpeg` in het `PATH` (beide aanwezig).
 | `PORT` | `3000` | Poort waarop geluisterd wordt (`0.0.0.0`). |
 | `YTDLP_PATH` | `.tools/yt-dlp` | Eigen yt-dlp binary gebruiken. |
 | `YTDLP_COOKIES` | – | Pad naar `cookies.txt` voor leeftijds-/login-restricties. |
+| `YTDLP_PLAYER_CLIENT` | – | Forceer een YouTube-player-client als eerste poging, bv. `tv` of `visionos,ios`. |
 | `ALLOW_ANY_URL` | `0` | `1` = elke door yt-dlp ondersteunde site toestaan. |
 | `MAX_CONCURRENT_DOWNLOADS` | `2` | Gelijktijdige yt-dlp-processen (beschermt de container). |
 | `MAX_ACTIVE_DOWNLOADS` | `24` | Maximaal aantal jobs in de wachtrij. |
@@ -58,6 +63,10 @@ niets te doen. Vereist: Node ≥ 18 en `ffmpeg` in het `PATH` (beide aanwezig).
 
 `mode` is `video` of `audio`; `quality` is `best|1080|720|480|360` voor video en
 `320|256|192|128` voor audio.
+
+Een job-status bevat naast `status`, `percent` en `message` ook `attempt` /
+`attemptsMax` (welke poging loopt er nu) en bij een fout `error` (nette tekst)
+plus `errorDetail` (ruwe yt-dlp-melding).
 
 ```bash
 curl -s -X POST localhost:3000/api/info \
@@ -89,6 +98,42 @@ npm run setup -- --force          # yt-dlp bijwerken naar de nieuwste versie
 sudo supervisorctl restart appserver
 sudo supervisorctl status appserver
 ```
+
+## Als een download mislukt (HTTP 403 / "unable to download video data")
+
+YouTube geeft per video tijdelijke media-URL's uit en blokkeert die soms
+(`HTTP Error 403: Forbidden`). Dat is bijna altijd tijdelijk en hangt samen met
+het IP-adres van de server (datacenter-IP's worden strenger gecontroleerd).
+
+Wat de app automatisch doet:
+
+1. **Poging 1** — de standaard yt-dlp player clients.
+2. **Poging 2** — opnieuw extraheren met `visionos,ios,web_safari` (dus nieuwe URL's).
+3. **Poging 3** — idem, plus extra formaten (`formats=missing_pot`) en `--force-ipv4`.
+
+Tussen de pogingen zit 2–10 seconden pauze en de tijdelijke map wordt leeggemaakt,
+zodat er geen half bestand wordt hervat. Lukt het daarna nog steeds niet, dan zie
+je in de interface een uitleg met de ruwe yt-dlp-melding onder "Details" en een
+**Try again**-knop.
+
+```bash
+# Wat kun je zelf doen?
+npm run setup -- --force      # yt-dlp bijwerken (YouTube verandert vaak)
+sudo supervisorctl restart appserver
+
+# foutmeldingen (inclusief de mislukte URL) terugvinden in het serverlog:
+sudo supervisorctl tail -f appserver stderr
+```
+
+Hulpvarianten:
+
+- Andere kwaliteit kiezen (bijv. 720p in plaats van "Best available"): per
+  kwaliteit gebruikt YouTube andere streams.
+- Wachten: een IP-blokkade verdwijnt meestal binnen enkele minuten.
+- Leeftijdsgebonden of login-only video's: `cookies.txt` plaatsen en
+  `YTDLP_COOKIES` naar dat bestand laten wijzen.
+- Andere player-client forceren: `YTDLP_PLAYER_CLIENT=visionos,ios` (of `tv`,
+  `web_safari`) in de omgeving van `appserver` zetten.
 
 ## Let op
 

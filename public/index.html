@@ -36,7 +36,13 @@
           <code>youtube.com/shorts</code> links. Playlists are ignored — one video per download.
         </p>
 
-        <div class="error" id="errorBox" hidden></div>
+        <div class="error" id="errorBox" hidden>
+          <div id="errorText"></div>
+          <div class="actions" id="errorActions" hidden>
+            <button type="button" class="ghost" id="retryBtn">Try again</button>
+          </div>
+          <small id="errorDetail" hidden></small>
+        </div>
         <div class="error" id="setupBox" hidden></div>
 
         <section class="section" id="infoSection" hidden>
