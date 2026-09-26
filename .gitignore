@@ -6,3 +6,8 @@ build/
 *.log
 .DS_Store
 .env
+
+# downloaded tooling / temporary media
+.tools/
+tmp/
+cookies.txt

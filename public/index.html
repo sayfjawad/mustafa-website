@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>YouTube Downloader · mustafa.sdai.nl</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="wrap">
+      <header class="top">
+        <div class="brand">
+          <span class="logo" aria-hidden="true">⬇</span>
+          <div>
+            <h1>YouTube Downloader</h1>
+            <p class="subtitle">Paste a link, pick a format, keep the file.</p>
+          </div>
+        </div>
+        <span class="pill" id="statusPill">checking server…</span>
+      </header>
+
+      <main class="card">
+        <form class="fetch" id="fetchForm" autocomplete="off">
+          <input
+            type="url"
+            id="urlInput"
+            name="url"
+            placeholder="https://www.youtube.com/watch?v=…"
+            aria-label="YouTube link"
+            required
+          />
+          <button type="submit" id="fetchBtn">Check link</button>
+        </form>
+        <p class="hint">
+          Works with <code>youtube.com/watch</code>, <code>youtu.be</code> and
+          <code>youtube.com/shorts</code> links. Playlists are ignored — one video per download.
+        </p>
+
+        <div class="error" id="errorBox" hidden></div>
+        <div class="error" id="setupBox" hidden></div>
+
+        <section class="section" id="infoSection" hidden>
+          <div class="video">
+            <img id="thumb" alt="" hidden />
+            <div class="meta">
+              <h2 id="vTitle">—</h2>
+              <p id="vUploader"></p>
+              <p id="vMeta"></p>
+            </div>
+          </div>
+
+          <div class="section">
+            <div class="tabs" role="tablist">
+              <button type="button" id="tabVideo" class="active" data-mode="video" role="tab">
+                🎬 Video · MP4
+              </button>
+              <button type="button" id="tabAudio" data-mode="audio" role="tab">
+                🎵 Audio · MP3
+              </button>
+            </div>
+
+            <div class="options">
+              <select id="qualitySelect" aria-label="Quality"></select>
+              <button type="button" id="downloadBtn">Download</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="progress" id="progressSection" hidden>
+          <div class="stats">
+            <span id="progressMessage">Starting…</span>
+            <span>
+              <strong id="progressPercent">0%</strong>
+              <span id="progressDetail"></span>
+            </span>
+          </div>
+          <div class="bar" id="progressBar"><i></i></div>
+          <div class="actions">
+            <button type="button" class="ghost" id="cancelBtn">Cancel</button>
+          </div>
+        </section>
+
+        <div class="success" id="successBox" hidden>
+          ✅ Saved <strong id="savedName"></strong>. If your browser didn't start the download,
+          <a href="#" id="saveAgain">save it again</a>.
+        </div>
+      </main>
+
+      <footer>
+        Server-side <code>yt-dlp</code> + <code>ffmpeg</code> ·
+        <span id="serverInfo"></span><br />
+        Only download videos you have the rights to. Respect YouTube's Terms of Service and
+        local copyright law.
+      </footer>
+    </div>
+
+    <script src="/app.js"></script>
+  </body>
+</html>

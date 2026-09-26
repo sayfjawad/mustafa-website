@@ -1,10 +1,15 @@
 {
   "name": "mustafa-website",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
-  "description": "Workshop website for mustafa — served on :3000, live at https://mustafa.sdai.nl",
+  "description": "YouTube downloader web app — served on :3000, live at https://mustafa.sdai.nl",
   "scripts": {
-    "dev": "node server.js",
+    "setup": "node scripts/setup.js",
+    "prestart": "node scripts/setup.js --optional",
     "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
   }
 }
+
